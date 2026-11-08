@@ -1,0 +1,159 @@
+#:import from_hex kivy.utils.get_color_from_hex
+#:import colormap kivy.utils.colormap
+
+#:set main_color '#5e198a'
+#:set main_color_dark "#390f7d"
+
+<Widget>:
+  font_name: 'assets/Lemon-Regular.ttf'
+
+<ButtonMenu@Button>:
+  font_size: "56sp"
+  bold: True
+  background_color: 0, 0, 0, 0
+  size_hint: None, None
+  pos_hint: {"center_x": 0.5}
+  width: self.texture_size[0] + dp(40)
+
+  canvas.before:
+    Color:
+      rgba: colormap['white']
+    RoundedRectangle:
+      size: self.size
+      pos: self.pos
+      radius: [self.font_size]
+    Color:
+      rgba: from_hex(main_color) if self.state == 'normal' else from_hex(main_color_dark)
+    RoundedRectangle:
+      size: self.size[0] - dp(6), self.size[1] - dp(6)
+      pos: self.pos[0] + dp(3), self.pos[1] + dp(3)
+      radius: [self.font_size]
+
+<ButtonIcon@ButtonMenu>:
+  font_name: 'assets/typicons.ttf'
+
+<Menu>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: "30dp"
+    spacing: "20dp"
+
+    canvas:
+      Rectangle:
+        source: 'assets/images/SpaceBg.png'
+        size: dp(750), self.size[1]
+        pos: self.center_x - dp(750) / 2, self.y
+
+    Widget:
+      size_hint_y: 0.05
+
+    Image:
+      source: "assets/images/GameNLO.png"
+      allow_stretch: True
+      size_hint_y: 0.89
+
+    ButtonMenu:
+      text: " PLAY "
+      size_hint_y: 0.15
+      on_press:
+        root.manager.current = "game"
+        root.manager.transition.direction = "left"
+
+    BoxLayout:
+      size_hint_y: 0.15
+
+      ButtonIcon:
+        text: "\uE04F"
+        on_press:
+          root.go_settings()
+
+      Widget:
+
+      ButtonIcon:
+        text: "\uE121"
+        on_press:
+          app.stop()
+
+<Settings>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: "30dp"
+    spacing: "20dp"
+
+    Label:
+      text: "Settings"
+      font_size: "40sp"
+
+    ButtonMenu:
+      text: "Back"
+      size_hint_y: 0.2
+      on_press:
+        root.go_menu()
+
+<RotatedImage>:
+  canvas.before:
+    PushMatrix
+    Rotate:
+      angle: self.angle
+      axis: 0, 0, 1
+      origin: self.center
+  canvas.after:
+    PopMatrix
+
+<Fish>:
+  source: 'assets/images/Comet1.png'
+  size_hint: None, None
+  size: dp(200), dp(200)
+  allow_stretch: True
+  opacity: 0
+
+<Game>:
+  BoxLayout:
+    orientation: "vertical"
+    padding: "30dp"
+    spacing: "20dp"
+
+    canvas:
+      Rectangle:
+        source: root.bg_source
+        pos: self.pos
+        size: self.size
+
+    BoxLayout:
+      size_hint_y: 0.12
+
+      Label:
+        text: str(root.score)
+        font_size: '56sp'
+        size_hint_x: 0.8
+        pos_hint: {'center_x': 1}
+
+      ButtonIcon:
+        text: '\uE08A'
+        on_press: root.go_home()
+
+    FloatLayout:
+      size_hint_y: 0.76
+      id: game_window
+
+      Fish:
+        id: fish
+        center: root.center
+
+      Label:
+        id: level_complete
+        text: '    Level\ncomplete!'
+        color: from_hex('#5224d1')
+        font_size: '50sp'
+        size_hint_y: None
+        height: self.texture_size[1]
+        x: root.width / 2 - self.width / 2
+        y: root.height / 2 - self.height / 2 + dp(100)
+        opacity: 0
+
+    BoxLayout:
+      size_hint_y: 0.12
+
+      ButtonIcon:
+        text: '\uE04F'
+        pos_hint: {'y': 0}
